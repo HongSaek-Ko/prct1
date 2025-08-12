@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/toyproject?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 8064
+    password: 1234
 
   jpa:
     database: mysql
