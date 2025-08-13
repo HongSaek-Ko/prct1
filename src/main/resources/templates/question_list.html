@@ -20,8 +20,15 @@
         <!--  :each - {Model객체}를 {배열}의 갯수만큼 반복하여 출력(= enhanced for loop, for-each) -->
         <!--  :text=${값} - 해당 요소의 텍스트로 "값"을 출력 -->
         <tr th:each="question, loop : ${questionList}">
-          <!-- 질문 번호 -->
-          <td th:text="${loop.count}"></td>
+          <!-- 질문 번호 = 전체 질문 개수 - (현재 페이지 * 페이지 당 질문 개수) - 나열 인덱스 -->
+          <!-- 나열 인덱스: 
+            for문 내의 게시물 순서 (현재 페이지에서 표시할 수 있는 게시물의 인덱스)
+            즉, [0] ~ [표시 가능한 게시물 목록의 마지막 인덱스] -->
+          <td
+            th:text="${questionList.getTotalElements 
+              - (questionList.number * questionList.size) 
+              - loop.index}"
+          ></td>
           <td>
             <!-- th:href - thymeleaf의 링크 주소 -->
             <!-- 문자열과 {객체}가 조합될 때는 @{}의 내부를-|로 양 끝을 감싸야 함 (|: 문자열 연결)-->
@@ -30,6 +37,13 @@
               th:href="@{|/question/detail/${question.id}|}"
               th:text="${question.subject}"
             ></a>
+            <!-- 답변이 있다면(if > 0) 개수 표시 
+              #lists.size(이터러블객체): 이터러블 객체의 크기 반환 -->
+            <span
+              class="text-danger small ms-2"
+              th:if="${#lists.size(question.answerList) > 0}"
+              th:text="${#lists.size(question.answerList)}"
+            ></span>
           </td>
           <!-- #temporals.format(날짜객체, 날짜포맷). 연-월-일, 시:분:초 -->
           <td
@@ -57,7 +71,7 @@
         <li
           th:each="page: ${#numbers.sequence(0, questionList.totalPages-1)}"
           th:if="${page >= questionList.number-5 AND page <= questionList.number+5}"
-          th:classappend="${page == paging.number} ? 'active'"
+          th:classappend="${page == questionList.number} ? 'active'"
           class="page-item"
         >
           <a
