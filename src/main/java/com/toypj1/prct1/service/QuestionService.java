@@ -1,12 +1,14 @@
 package com.toypj1.prct1.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.toypj1.prct1.DataNotFoundException;
@@ -44,9 +46,14 @@ public class QuestionService {
     questionRepository.save(q);
   }
 
-  // 페이징처리. (조회할 페이지 번호, 한 페이지에 보여줄 게시물 개수)
+  // 페이징처리
   public Page<Question> getList(int page) {
-    Pageable pageable = PageRequest.of(page, 10);
+    // 작성일시 역순으로(= 최신순, 날짜값 높은순)으로 조회
+    List<Sort.Order> sorts = new ArrayList<>();
+    sorts.add(Sort.Order.desc("createDate"));
+
+    // 조회할 페이지 번호, 한 페이지에서 보여줄 게시물 개수, 정렬 조건
+    Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
     return questionRepository.findAll(pageable);
   }
 }

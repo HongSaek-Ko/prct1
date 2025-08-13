@@ -52,7 +52,7 @@
           </a>
         </li>
         <!-- 질문 목록(반복문). 현재 페이지와 동일한 페이지면 강조표시(active) -->
-        <!-- 현재 페이지 기준 좌우 5개씩 표시 -->
+        <!-- 현재 페이지 기준 좌우 5개씩 표시 (페이지숫자-5 && 페이지숫자+5) -->
         <!-- #numbers.sequnce(시작, 끝): 시작 ~ 끝 번호까지의 루프를 만드는 thymeleaf의 유틸리티.  -->
         <li
           th:each="page: ${#numbers.sequence(0, questionList.totalPages-1)}"
