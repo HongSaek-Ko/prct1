@@ -4,13 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-// TODO: '질문 목록과 템플릿' 부터 시작
 @Controller
 public class HomeController {
   
   @GetMapping("/home")
   @ResponseBody
   public String home() {
-    return "hello world!";
+    return "여기는 질답 사이트에용.";
   }
+
+  // localhost:{포트번호} 외 아무것도 입력 안하면 리다이렉트
+  @GetMapping("/")
+  public String root() {
+    return "redirect:/question/list";
+  }
+
 }

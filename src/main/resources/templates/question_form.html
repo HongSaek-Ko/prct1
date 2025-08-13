@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+  <div layout:fragment="content" class="container">
+    <h5 class="my-3 border-bottom pb-2">질문 등록</h5>
+    <!-- th:object=${객체} - form의 속성들이 QuestionForm의 속성들로 구성됨을 명시 -->
+    <form
+      th:action="@{/question/regist}"
+      th:object="${questionForm}"
+      method="post"
+    >
+      <!-- 오류 메시지 공통 템플릿 -->
+      <!-- div 요소를 form_errors.html의 th:fragment 속성명이 f.E.F인 요소로 교체 -->
+      <div th:replace="form_errors :: formErrorFragment"></div>
+      <!-- 유효성 검사 실패 시 오류 메시지(붉은색) 출력. -->
+      <!-- 실패: #fields.hasAnyErrors(): true -->
+      <!-- <div
+        class="alert alert-danger"
+        role="alert"
+        th:if="${#fields.hasAnyErrors()}"
+      >
+        <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+      </div> -->
+      <div class="mb-3">
+        <label for="subject" class="form-label">제목</label>
+        <!-- th:field=속성 - name=속성 과 동일한 역할. 
+          단, 등록 에러(유효성 검사 실패) 발생 시 입력 내용이 초기화되는 것을 방지하는 기능이 있음-->
+        <input type="text" th:field="*{subject}" class="form-control" />
+      </div>
+      <div class="mb-3">
+        <label for="contnet" class="form-label">내용</label>
+        <textarea
+          th:field="*{content}"
+          class="form-control"
+          rows="10"
+        ></textarea>
+      </div>
+      <input type="submit" value="등록하기" class="btn btn-primary my-2" />
+    </form>
+  </div>
+</html>

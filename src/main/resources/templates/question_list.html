@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- layout.html 템플릿 상속 -->
+<!-- latout:decorate - 템플릿의 레이아웃(부모 템플릿)으로 사용할 템플릿을 설정 -->
+<!-- 속성 값인 ~{layout}은 해당 파일(layout.html)을 의미 -->
+<!-- 이 html 파일은 layout.html을 상속받아서 표준 HTML문서가 됨 (head, meta 등등을 layout으로부터 상속)-->
+<html lang="ko" layout:decorate="~{layout}">
+  <!-- 부모 템플릿(layout.html)의 th:block 요소의 내용이 자식 템플릿의 div 요소 내용으로 교체됨 -->
+  <div layout:fragment="content" class="container my-3">
+    <h2>질문 목록</h2>
+    <table class="table">
+      <thead class="table-dark">
+        <tr>
+          <th>번호</th>
+          <th>제목</th>
+          <th>작성일시</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- th: - thymeleaf template engine이 사용하는 속성 -->
+        <!--  :each - {Model객체}를 {배열}의 갯수만큼 반복하여 출력(= enhanced for loop, for-each) -->
+        <!--  :text=${값} - 해당 요소의 텍스트로 "값"을 출력 -->
+        <tr th:each="question, loop : ${questionList}">
+          <!-- 질문 번호 -->
+          <td th:text="${loop.count}"></td>
+          <td>
+            <!-- th:href - thymeleaf의 링크 주소 -->
+            <!-- 문자열과 {객체}가 조합될 때는 @{}의 내부를-|로 양 끝을 감싸야 함 (|: 문자열 연결)-->
+            <!-- 질문 제목 (링크: 클릭 시 해당 질문으로 이동)-->
+            <a
+              th:href="@{|/question/detail/${question.id}|}"
+              th:text="${question.subject}"
+            ></a>
+          </td>
+          <!-- #temporals.format(날짜객체, 날짜포맷). 연-월-일, 시:분:초 -->
+          <td
+            th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm:ss')}"
+          ></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- 페이징처리(페이지 번호) 시작 -->
+    <!-- class=pagination, page-item, page-link 등은 bootstrap pagination 컴포넌트의 class -->
+    <div th:if="${!questionList.isEmpty()}">
+      <ul class="pagination justify-content-center">
+        <!-- 이전 페이지가 없으면(!hasPrevious) '이전'링크 비활성화(disabled)  -->
+        <li
+          class="page-item"
+          th:classappend="${!questionList.hasPrevious} ? 'disabled'"
+        >
+          <a class="page-link" th:href="@{|?page=${questionList.number-1}|}">
+            <span>이전</span>
+          </a>
+        </li>
+        <!-- 질문 목록(반복문). 현재 페이지와 동일한 페이지면 강조표시(active) -->
+        <!-- 현재 페이지 기준 좌우 5개씩 표시 -->
+        <!-- #numbers.sequnce(시작, 끝): 시작 ~ 끝 번호까지의 루프를 만드는 thymeleaf의 유틸리티.  -->
+        <li
+          th:each="page: ${#numbers.sequence(0, questionList.totalPages-1)}"
+          th:if="${page >= questionList.number-5 AND page <= questionList.number+5}"
+          th:classappend="${page == paging.number} ? 'active'"
+          class="page-item"
+        >
+          <a
+            th:text="${page}"
+            class="page-link"
+            th:href="@{|?page=${page}|}"
+          ></a>
+        </li>
+        <!-- 이후 페이지가 없으면(!hasNext) '다음'링크 비활성화(disabled)  -->
+        <li
+          class="page-item"
+          th:classappend="${!questionList.hasNext} ? 'disabled'"
+        >
+          <a class="page-link" th:href="@{|?page=${questionList.number+1}|}"
+            ><span>다음</span></a
+          >
+        </li>
+      </ul>
+    </div>
+    <!-- 페이징처리(페이지 번호) 끝 -->
+    <a th:href="@{/question/regist}" class="btn btn-primary">질문하기</a>
+  </div>
+</html>

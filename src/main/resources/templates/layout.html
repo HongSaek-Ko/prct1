@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <!-- Bootstrap CSS -->
+    <!-- static 경로가 static 내 파일들의 root directory이므로 static은 경로로 작성X -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}" />
+    <!-- sbb CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+    <title>vscode + spring boot</title>
+  </head>
+  <body>
+    <!-- 내비게이션 바 -->
+    <nav th:replace="navbar :: navbarFragment"></nav>
+    <!-- 기본 템플릿 안에 삽입될 내용 -->
+    <th:block layout:fragment="content"></th:block>
+    <!-- bootStrap 자바스크립트 -->
+    <script th:src="@{/bootstrap.min.js}"></script>
+  </body>
+</html>

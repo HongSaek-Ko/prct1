@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.toypj1.prct1.domain.Question;
 import com.toypj1.prct1.repository.QuestionRepository;
+import com.toypj1.prct1.service.QuestionService;
 
 
 @SpringBootTest
@@ -21,21 +22,24 @@ class Prct1ApplicationTests {
 	@Autowired
 	private QuestionRepository questionRepository;
 
+	@Autowired
+	private QuestionService questionService;
+
 	@Test
 	public void testJpa() {
 		// 1-1. 첫 번째 질문
-		// Question q1 = new Question();
-		// q1.setSubject("내가 누구냐고?");
-		// q1.setContent("알 필요 없다.");
-		// q1.setCreateDate(LocalDateTime.now());
-		// this.questionRepository.save(q1);
+		Question q1 = new Question();
+		q1.setSubject("내가 누구냐고?");
+		q1.setContent("알 필요 없다.");
+		q1.setCreateDate(LocalDateTime.now());
+		this.questionRepository.save(q1);
 
 		// 1-2. 두 번째 질문
-		// Question q2 = new Question();
-		// q2.setSubject("헛 것이 보이나?");
-		// q2.setContent("애석하군.");
-		// q2.setCreateDate(LocalDateTime.now());
-		// this.questionRepository.save(q2);
+		Question q2 = new Question();
+		q2.setSubject("헛 것이 보이나?");
+		q2.setContent("애석하군.");
+		q2.setCreateDate(LocalDateTime.now());
+		this.questionRepository.save(q2);
 
 		// 2. 모든 데이터 조회
 		List<Question> all_Questions = this.questionRepository.findAll();
@@ -89,6 +93,15 @@ class Prct1ApplicationTests {
 		q.setSubject("질문은 그만");
 		this.questionRepository.save(q);
 	}
-
 	// 나머지는 https://saranghaeo.tistory.com/148 에서 찾아보아요~
+
+	@Test
+	void msvData() {
+		for (int i = 0; i <= 299; i++) {
+			String sbj = String.format("제목:[%03d]", i);
+			String cont = "내용";
+			questionService.registQuestion(sbj, cont);
+		}
+	}
+
 }
