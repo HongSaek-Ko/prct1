@@ -15,7 +15,7 @@
           th:text="${question.content}"
         ></div>
         <!-- content 컴포넌트: 우측 정렬 -->
-        <div class="d-flex justify-cotent-end">
+        <div class="d-flex justify-content-end">
           <!-- badge 컴포넌트: 배경 하양, 글씨 검정, 들여쓰기 2, 좌측 정렬-->
           <div class="badge bg-light text-dark p-2 text-start">
             <!-- 작성일자. %y-%m-%d hh:mm:ss 형식 -->
@@ -62,7 +62,7 @@
       th:object="${answerForm}"
       method="post"
     >
-      <div th:replace="form_errors :: formErrorFragment"></div>
+      <div th:replace="form_errors :: formErrorsFragment"></div>
       <!-- 에러 메시지 시작. 에러 발생 시에만 표시 -->
       <!-- <div
         class="alert alert-danger"

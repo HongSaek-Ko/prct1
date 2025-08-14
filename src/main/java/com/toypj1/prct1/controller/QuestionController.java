@@ -48,7 +48,7 @@ public class QuestionController {
 
   // Get 요청: 질문 내용
   // {경로변수}의 변수명은 일치해야 함
-  @GetMapping("/question/detail/{id}")
+  @GetMapping("/detail/{id}")
   public String getDetail(
     Model model, 
     @PathVariable(value = "id") Integer id, 
@@ -70,11 +70,11 @@ public class QuestionController {
   /* 
    * sbj, cont 항목의 form 전송 → QuestionForm의 subject, content 속성이 자동으로 binding
    * @Valid: QuestionFor의 @NotEmpty, @Size 등의 유효성 검사 기능이 동작
-   * @B.R: @Vaild 어노테이션으로 검증이 수행된 결과를 의미하는 객체. 반드시 @Valid 매개변수 뒤에 있어야 함
+   * B.R: @Vaild 어노테이션으로 검증이 수행된 결과를 의미하는 객체. 반드시 @Valid 매개변수 뒤에 있어야 함
   */
   @PostMapping("/regist")
   public String registQuestion(@Valid QuestionForm questionForm, BindingResult bindingResult) {
-    // 오류(유효성 검사 실패) 발생 시 질문 등록 폼 (다시)렌더링
+    // 오류(유효성 검사 실패) 발생 시 질문 등록 폼 (다시)렌더링 (true/false)
     if (bindingResult.hasErrors()) {
       return "question_form";
     }

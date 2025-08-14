@@ -15,7 +15,7 @@ public class HomeController {
   }
 
   // localhost:{포트번호} 외 아무것도 입력 안하면 리다이렉트
-  @RequestMapping("/")
+  @GetMapping("/")
   public String root() {
     return "redirect:/question/list";
   }
