@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+  <div layout:fragment="content" class="container my-3">
+    <form th:action="@{/user/signIn}" method="post">
+      <!-- 로그인 실패 시 안내문구 출력:
+        1. security 로그인 실패
+        2. 로그인 페이지로 리다이렉트
+        3. 2.와 동시에 페이지 파라미터로 error 전달
+        4. 3.의 결과로 param에 error 전달, 조건 만족하여 출력
+      -->
+      <div th:if="${param.error}">
+        <div class="alert alert-danger">
+          ID 혹은 비밀번호를 다시 확인해주세요.
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="membername" class="form-label">사용자ID</label>
+        <input
+          type="text"
+          name="membername"
+          id="membername"
+          class="form-control"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">비밀번호</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          class="form-control"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+  </div>
+</html>
