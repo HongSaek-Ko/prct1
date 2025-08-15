@@ -100,7 +100,7 @@ class Prct1ApplicationTests {
 		for (int i = 0; i <= 299; i++) {
 			String sbj = String.format("제목:[%03d]", i);
 			String cont = "내용";
-			questionService.registQuestion(sbj, cont);
+			questionService.registQuestion(sbj, cont, null);
 		}
 	}
 

@@ -10,6 +10,8 @@ import com.toypj1.prct1.service.MemberService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Slf4j
 public class MemberController {
   private final MemberService memberService;
 
@@ -45,6 +48,7 @@ public class MemberController {
 
     try {
       // 둘 다 통과 시 (회원가입 후)홈화면으로 리다이렉트
+      log.info("password??: {}", signUpForm.getPassword());
       memberService.create(signUpForm.getMembername(), signUpForm.getEmail(), signUpForm.getPassword());
       return "redirect:/";
       

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.toypj1.prct1.DataNotFoundException;
+import com.toypj1.prct1.domain.Member;
 import com.toypj1.prct1.domain.Question;
 import com.toypj1.prct1.repository.QuestionRepository;
 
@@ -38,11 +39,12 @@ public class QuestionService {
   }
 
   // 질문 등록
-  public void registQuestion(String sbj, String cont) {
+  public void registQuestion(String sbj, String cont, Member member) {
     Question q = new Question();
-    q.setSubject(sbj);
-    q.setContent(cont);
-    q.setCreateDate(LocalDateTime.now());
+    q.setSubject(sbj); // 제목
+    q.setContent(cont); // 내용
+    q.setAuthor(member); // 작성자
+    q.setCreateDate(LocalDateTime.now()); // 작성일시
     questionRepository.save(q);
   }
 
@@ -55,5 +57,18 @@ public class QuestionService {
     // 조회할 페이지 번호, 한 페이지에서 보여줄 게시물 개수, 정렬 조건
     Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
     return questionRepository.findAll(pageable);
+  }
+
+  // 질문 수정
+  public void modify(Question q, String sbj, String cont) {
+    q.setSubject(sbj);
+    q.setContent(cont);
+    q.setModifyDate(LocalDateTime.now());
+    questionRepository.save(q);
+  }
+  
+  // 질문 삭제
+  public void delete(Question question) {
+    questionRepository.delete(question);
   }
 }

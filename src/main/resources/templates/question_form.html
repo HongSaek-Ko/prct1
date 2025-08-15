@@ -3,11 +3,13 @@
   <div layout:fragment="content" class="container">
     <h5 class="my-3 border-bottom pb-2">질문 등록</h5>
     <!-- th:object=${객체} - form의 속성들이 QuestionForm의 속성들로 구성됨을 명시 -->
-    <form
-      th:action="@{/question/regist}"
-      th:object="${questionForm}"
-      method="post"
-    >
+    <form th:object="${questionForm}" method="post">
+      <!-- S.S 규칙 상 th:action 속성 지정하는 대신 CSRF 값 설정을 수동으로 추가 -->
+      <input
+        type="hidden"
+        th:name="${_csrf.parameterName}"
+        th:value="${_csrf.token}"
+      />
       <!-- 오류 메시지 공통 템플릿 시작 -->
       <!-- div 요소를 form_errors.html의 th:fragment 속성명이 f.E.F인 요소로 교체 -->
       <div th:replace="form_errors :: formErrorsFragment"></div>

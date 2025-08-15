@@ -2,6 +2,7 @@ package com.toypj1.prct1.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,5 +41,17 @@ public class Question {
   @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
   private List<Answer> answerList;
 
+  // 작성일시
   private LocalDateTime createDate;
+
+  // 글 작성자 >- 사용자
+  @ManyToOne
+  private Member author;
+
+  // 수정일시
+  private LocalDateTime modifyDate;
+
+  // 추천인
+  @ManyToMany
+  Set<Member> recommender;
 }

@@ -19,7 +19,9 @@
     <nav th:replace="navbar :: navbarFragment"></nav>
     <!-- 기본 템플릿 안에 삽입될 내용 -->
     <th:block layout:fragment="content"></th:block>
-    <!-- bootStrap 자바스크립트 -->
+    <!-- bootStrap -->
     <script th:src="@{/bootstrap.min.js}"></script>
+    <!-- 자바스크립트 -->
+    <th:block layout:fragment="script"></th:block>
   </body>
 </html>

@@ -1,10 +1,13 @@
 package com.toypj1.prct1.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.toypj1.prct1.DataNotFoundException;
 import com.toypj1.prct1.domain.Answer;
+import com.toypj1.prct1.domain.Member;
 import com.toypj1.prct1.domain.Question;
 import com.toypj1.prct1.repository.AnswerRepository;
 
@@ -15,11 +18,35 @@ import lombok.RequiredArgsConstructor;
 public class AnswerService {
   private final AnswerRepository answerRepository;
 
-  public void registAnswer(Question question, String content) {
+  // 답변 등록
+  public void registAnswer(Question question, String content, Member author) {
     Answer answer = new Answer();
-    answer.setContent(content);
-    answer.setCreateDate(LocalDateTime.now());
-    answer.setQuestion(question);
+    answer.setContent(content); // 내용
+    answer.setCreateDate(LocalDateTime.now()); // 작성일시
+    answer.setQuestion(question); // 원본글(질문)
+    answer.setAuthor(author); // 작성자(답변)
     answerRepository.save(answer);
+  }
+
+  // 답변 조회
+  public Answer getAnswer(Integer id) {
+    Optional<Answer> answer = answerRepository.findById(id);
+    if(answer.isPresent()) {
+      return answer.get();
+    } else {
+      throw new DataNotFoundException("answer not found");
+    }
+  }
+
+  // 답변 수정
+  public void modifyAnswer(Answer answer, String content) {
+    answer.setContent(content);
+    answer.setModifyDate(LocalDateTime.now());
+    answerRepository.save(answer);
+  }
+  
+  // 답변 삭제
+  public void deleteAnswer(Answer answer) {
+    answerRepository.delete(answer);
   }
 }

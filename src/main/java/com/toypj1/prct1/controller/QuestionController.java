@@ -1,7 +1,11 @@
 package com.toypj1.prct1.controller;
 
 
+import java.security.Principal;
+
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,15 +13,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.toypj1.prct1.domain.AnswerForm;
+import com.toypj1.prct1.domain.Member;
 import com.toypj1.prct1.domain.Question;
 import com.toypj1.prct1.domain.QuestionForm;
+import com.toypj1.prct1.service.MemberService;
 import com.toypj1.prct1.service.QuestionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -27,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class QuestionController {
 
   private final QuestionService questionService;
+  private final MemberService memberService;
 
   // Get 요청: 질문 목록
   /* 
@@ -61,6 +71,7 @@ public class QuestionController {
 
   // Get 요청: 질문 등록(폼)
   // th:object에 의해 QuestionForm 객체를 불러옴
+  @PreAuthorize("isAuthenticated()") // '로그인이 필요한 메서드임' -> 로그아웃 상태에서 호출 시 로그인 페이지로 이동
   @GetMapping("/regist")
   public String getQuestionForm(QuestionForm questionForm) {
       return "question_form";
@@ -72,16 +83,81 @@ public class QuestionController {
    * @Valid: QuestionFor의 @NotEmpty, @Size 등의 유효성 검사 기능이 동작
    * B.R: @Vaild 어노테이션으로 검증이 수행된 결과를 의미하는 객체. 반드시 @Valid 매개변수 뒤에 있어야 함
   */
+  @PreAuthorize("isAuthenticated()") // '로그인이 필요한 메서드임' -> 로그아웃 상태에서 호출 시 로그인 페이지로 이동
   @PostMapping("/regist")
-  public String registQuestion(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+  public String registQuestion(@Valid QuestionForm questionForm, BindingResult bindingResult, Principal principal) {
     // 오류(유효성 검사 실패) 발생 시 질문 등록 폼 (다시)렌더링 (true/false)
     if (bindingResult.hasErrors()) {
       return "question_form";
     }
     // 오류 발생 안했으면 그대로 등록.
-    questionService.registQuestion(questionForm.getSubject(), questionForm.getContent());
+    Member member = memberService.getMember(principal.getName());
+    questionService.registQuestion(questionForm.getSubject(), questionForm.getContent(), member);
       return "redirect:/question/list";
   }
   
+  // Get 요청: 질문 수정 폼
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/modifying/{id}")
+  public String queStringModify(QuestionForm questionForm, @PathVariable(value = "id") Integer id, Principal principal) {
+    // 1. id로 질문 가져오고...
+    Question question = questionService.getQuestion(id);
+    // * 작성자와 접속한 사용자가 동일한 경우에만 수정 가능. 다를 경우 아래 예외 던짐
+    if(!question.getAuthor().getMembername().equals(principal.getName())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
+    }
+    // 2. 1.에서 가져온 데이터로 제목, 내용 설정
+    questionForm.setSubject(question.getSubject());
+    questionForm.setContent(question.getContent());
+    return "question_form";
+  }
+
+  // Post 요청: 질문 수정
+  @PreAuthorize("isAuthenticated()")
+  @PostMapping("/modifying/{id}")
+  public String questionModify(
+    @Valid QuestionForm questionForm, 
+    BindingResult bindingResult, 
+    Principal principal, 
+    @PathVariable("id") Integer id
+  ) 
+  {
+    // 유효성 검사 실패 시 폼 재요청
+    if(bindingResult.hasErrors()) {
+      return "question_form";
+    }
+    // id로 질문 찾고 question에 저장
+    Question question = questionService.getQuestion(id);
+
+    // 사용자와 작성자가 동일할 때만 수정 가능
+    if(!question.getAuthor().getMembername().equals(principal.getName())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
+    }
+
+    // 수정: question 객체를, 제목 및 내용을 수정
+    questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
+
+    // 수정 완료 시 질문 상세 화면 리다이렉트
+    return String.format("redirect:/question/detail/%s", id);
+  }
+  
+  // Get 요청: 질문 삭제
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/delete/{id}")
+  public String questionDelete(Principal principal, @PathVariable(value = "id") Integer id) {
+    // id로 질문 찾고 question에 저장
+    Question question = questionService.getQuestion(id);
+
+    // 사용자 == 작성자만 수정 가능
+    if(!question.getAuthor().getMembername().equals(principal.getName())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
+    }
+    
+    // question 객체 삭제
+    questionService.delete(question);
+
+    // 요청 처리 후 루트 경로로 리다이렉트
+    return "redirect:/";
+  }
   
 }

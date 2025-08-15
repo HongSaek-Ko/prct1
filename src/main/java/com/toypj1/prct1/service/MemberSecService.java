@@ -17,10 +17,12 @@ import com.toypj1.prct1.domain.ROLE;
 import com.toypj1.prct1.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 // s.s.가 제공하는 UserDetailService를 구현
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class MemberSecService implements UserDetailsService{
   
   private final MemberRepository memberRepository;
@@ -30,14 +32,16 @@ public class MemberSecService implements UserDetailsService{
   @Override
   public UserDetails loadUserByUsername(String membername) throws UsernameNotFoundException {
     // membername으로 사용자 조회하여 _member에 담음
-    Optional<Member> _member = memberRepository.findByMembername(membername);
+    Optional<Member> _member = this.memberRepository.findByMembername(membername);
     
     // 조회 결과 없으면 아래 오류 출력
-    if(_member.isEmpty()) { 
+    if(_member.isEmpty()) {
+      log.info("User_not_found: {}", membername);
       throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
     }
     // _member의 데이터를 m에 담음
     Member m = _member.get();
+    log.info("signInfo: {}", m);
 
     // 권한 목록
     List<GrantedAuthority> authorities = new ArrayList<>();

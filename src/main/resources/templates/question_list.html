@@ -9,9 +9,12 @@
     <h2>질문 목록</h2>
     <table class="table">
       <thead class="table-dark">
-        <tr>
+        <!-- th 요소 중앙정렬 -->
+        <tr class="text-center">
           <th>번호</th>
-          <th>제목</th>
+          <!-- 제목 너비는 전체에서 50% 차지 -->
+          <th style="width: 50%">제목</th>
+          <th>작성자</th>
           <th>작성일시</th>
         </tr>
       </thead>
@@ -19,7 +22,7 @@
         <!-- th: - thymeleaf template engine이 사용하는 속성 -->
         <!--  :each - {Model객체}를 {배열}의 갯수만큼 반복하여 출력(= enhanced for loop, for-each) -->
         <!--  :text=${값} - 해당 요소의 텍스트로 "값"을 출력 -->
-        <tr th:each="question, loop : ${questionList}">
+        <tr class="text-center" th:each="question, loop : ${questionList}">
           <!-- 질문 번호 = 전체 질문 개수 - (현재 페이지 * 페이지 당 질문 개수) - 나열 인덱스 -->
           <!-- 나열 인덱스: 
             for문 내의 게시물 순서 (현재 페이지에서 표시할 수 있는 게시물의 인덱스)
@@ -29,7 +32,8 @@
               - (questionList.number * questionList.size) 
               - loop.index}"
           ></td>
-          <td>
+          <!-- 제목 좌측정렬 -->
+          <td class="text-start">
             <!-- th:href - thymeleaf의 링크 주소 -->
             <!-- 문자열과 {객체}가 조합될 때는 @{}의 내부를-|로 양 끝을 감싸야 함 (|: 문자열 연결)-->
             <!-- 질문 제목 (링크: 클릭 시 해당 질문으로 이동)-->
@@ -43,6 +47,13 @@
               class="text-danger small ms-2"
               th:if="${#lists.size(question.answerList) > 0}"
               th:text="${#lists.size(question.answerList)}"
+            ></span>
+          </td>
+          <!-- 작성자 (작성자 정보 있는 경우에만 렌더링) -->
+          <td>
+            <span
+              th:if="${question.author != null}"
+              th:text="${question.author.membername}"
             ></span>
           </td>
           <!-- #temporals.format(날짜객체, 날짜포맷). 연-월-일, 시:분:초 -->
