@@ -52,6 +52,7 @@ public class Question {
   private LocalDateTime modifyDate;
 
   // 추천인
+  // Set: 중복을 허용하지 않는 자료형
   @ManyToMany
   Set<Member> recommender;
 }

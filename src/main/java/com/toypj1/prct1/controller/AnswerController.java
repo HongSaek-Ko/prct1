@@ -125,6 +125,14 @@ public class AnswerController {
     return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
   }
   
-  
+  // Get: 답변 추천
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/recommend/{id}")
+  public String recommendAnswer(Principal p, @PathVariable(value = "id") Integer id) {
+    Answer a = answerService.getAnswer(id);
+    Member m = memberService.getMember(p.getName());
+    answerService.recommend(a, m);
+    return String.format("/redirect:/question/detail/%s", a.getQuestion());
+  }
   
 }

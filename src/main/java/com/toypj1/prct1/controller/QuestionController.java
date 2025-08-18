@@ -98,7 +98,7 @@ public class QuestionController {
   
   // Get 요청: 질문 수정 폼
   @PreAuthorize("isAuthenticated()")
-  @GetMapping("/modifying/{id}")
+  @GetMapping("/modify/{id}")
   public String queStringModify(QuestionForm questionForm, @PathVariable(value = "id") Integer id, Principal principal) {
     // 1. id로 질문 가져오고...
     Question question = questionService.getQuestion(id);
@@ -114,7 +114,7 @@ public class QuestionController {
 
   // Post 요청: 질문 수정
   @PreAuthorize("isAuthenticated()")
-  @PostMapping("/modifying/{id}")
+  @PostMapping("/modify/{id}")
   public String questionModify(
     @Valid QuestionForm questionForm, 
     BindingResult bindingResult, 
@@ -158,6 +158,20 @@ public class QuestionController {
 
     // 요청 처리 후 루트 경로로 리다이렉트
     return "redirect:/";
+  }
+
+  // Get: 질문 추천
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/recommend/{id}")
+  public String recommendQuestion(Principal p, @PathVariable(value = "id") Integer id) {
+    // 글 id로 질문 가져오기
+    Question q = questionService.getQuestion(id);
+    // principal 객체의 name으로 사용자 정보 가져오기
+    Member m = memberService.getMember(p.getName());
+    // (추천할)글, (추천한)사용자 정보 넘기기
+    questionService.recommend(q, m);
+    // 요청 완료 시 해당 글로 리다이렉트
+    return String.format("redirect:/question/detail/%s", id);
   }
   
 }

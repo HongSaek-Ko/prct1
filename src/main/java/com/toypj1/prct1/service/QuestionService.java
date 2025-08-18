@@ -71,4 +71,11 @@ public class QuestionService {
   public void delete(Question question) {
     questionRepository.delete(question);
   }
+
+  // 질문 추천
+  public void recommend(Question question, Member member) {
+    // 질문 엔티티의 '추천인' 컬럼에 {사용자} 받아서 추가
+    question.getRecommender().add(member);
+    questionRepository.save(question);
+  }
 }

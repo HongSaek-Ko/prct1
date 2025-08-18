@@ -49,4 +49,10 @@ public class AnswerService {
   public void deleteAnswer(Answer answer) {
     answerRepository.delete(answer);
   }
+
+  // 답변 추천
+  public void recommend(Answer a, Member m) {
+    a.getRecommender().add(m);
+    answerRepository.save(a);
+  }
 }
