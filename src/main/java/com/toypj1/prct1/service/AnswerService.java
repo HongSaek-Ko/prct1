@@ -19,13 +19,15 @@ public class AnswerService {
   private final AnswerRepository answerRepository;
 
   // 답변 등록
-  public void registAnswer(Question question, String content, Member author) {
+  public Answer registAnswer(Question question, String content, Member author) {
     Answer answer = new Answer();
     answer.setContent(content); // 내용
     answer.setCreateDate(LocalDateTime.now()); // 작성일시
     answer.setQuestion(question); // 원본글(질문)
     answer.setAuthor(author); // 작성자(답변)
     answerRepository.save(answer);
+    // 답변 등록, 수정, 추천 후 리다이렉트 시 '답변 등록 위치로 이동'을 위한 답변 객체 리턴
+    return answer;
   }
 
   // 답변 조회

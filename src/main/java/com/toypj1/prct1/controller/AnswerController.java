@@ -23,9 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -41,8 +39,8 @@ public class AnswerController {
   // POST 요청: 답변 등록
   // @Valid: (답변 작성 시)유효성 검사
   // Principal: S.S에서 제공하는 '사용자 정보' 객체.
-  @PostMapping("/regist/{id}")
   @PreAuthorize("isAuthenticated()") // '로그인이 필요한 메서드임' -> 로그아웃 상태에서 호출 시 로그인 페이지로 이동
+  @PostMapping("/regist/{id}")
   public String registAnswer(
     Model model, 
     @PathVariable(value = "id") Integer id, 
@@ -56,9 +54,12 @@ public class AnswerController {
         return "question_content";
       }
 
-      // 검사 통과 시 등록 진행, 질문 상세보기로 리다리렉트
-      answerService.registAnswer(question, answerForm.getContent(), member);
-      return String.format("redirect:/question/detail/%s",id);
+      // 검사 통과 시 등록 진행, 질문 상세보기(q.getId)의 등록한 답변 위치(a.getId)로 리다이렉트
+      Answer answer = answerService.registAnswer(question, answerForm.getContent(), member);
+      return String.format(
+        "redirect:/question/detail/%s#answer_%s", 
+        answer.getQuestion().getId(), answer.getId()
+      );
   }
 
   // Get 요청: 답변 수정 폼
@@ -103,7 +104,8 @@ public class AnswerController {
     // answer에 담아둔 거로 content 수정
     answerService.modifyAnswer(answer, answerForm.getContent());
     // 수정 완료 시 해당 질문으로 리다이렉트
-    return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+    return String.format("redirect:/question/detail/%s#answer_%s", 
+    answer.getQuestion().getId(), answer.getId());
   }
   
   // Get: 답변 삭제 폼
@@ -132,7 +134,8 @@ public class AnswerController {
     Answer a = answerService.getAnswer(id);
     Member m = memberService.getMember(p.getName());
     answerService.recommend(a, m);
-    return String.format("/redirect:/question/detail/%s", a.getQuestion());
+    return String.format("redirect:/question/detail/%s#answer_%s", 
+    a.getQuestion().getId(), a.getId());
   }
   
 }

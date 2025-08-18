@@ -9,4 +9,5 @@ import com.toypj1.prct1.domain.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
   Optional<Member> findByMembername(String membername);
+
 } 

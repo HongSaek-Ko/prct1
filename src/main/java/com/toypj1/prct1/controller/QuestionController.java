@@ -25,7 +25,6 @@ import com.toypj1.prct1.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -45,14 +44,18 @@ public class QuestionController {
     template에서 그 값을 사용할 수 있음 
     
     2. Page: 페이지 파라미터(URL) 전달. 기본값 0.
+
+    3. kw: 검색값 전달. 기본값 ""(빈 문자열)
   */
   @GetMapping("/list")
   public String getQuestionList(
     Model model, 
-    @RequestParam(value = "page", defaultValue = "0") int page
-  ) {
-    Page<Question> questionList = questionService.getList(page);
+    @RequestParam(value = "page", defaultValue = "0") int page,
+    @RequestParam(value = "kw", defaultValue = "") String kw)
+  {
+    Page<Question> questionList = questionService.getList(page, kw);
     model.addAttribute("questionList", questionList);
+    model.addAttribute("kw", kw);
     return "question_list";
   }
 

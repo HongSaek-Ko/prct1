@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -52,7 +51,7 @@ public class MemberController {
       memberService.create(signUpForm.getMembername(), signUpForm.getEmail(), signUpForm.getPassword());
       return "redirect:/";
       
-      // 사용자 ID 혹은 이메일 주소가 이미 있으면(uk임) 회원가입 거부
+      // 사용자 ID 혹은 이메일 주소가 이미 있으면 회원가입 거부
     } catch (DataIntegrityViolationException e) {
       e.printStackTrace();
       bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
@@ -72,4 +71,5 @@ public class MemberController {
   public String signIn() {
       return "sign_in";
   }
+
 }
