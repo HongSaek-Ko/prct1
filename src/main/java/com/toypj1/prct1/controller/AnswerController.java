@@ -103,7 +103,7 @@ public class AnswerController {
     }
     // answer에 담아둔 거로 content 수정
     answerService.modifyAnswer(answer, answerForm.getContent());
-    // 수정 완료 시 해당 질문으로 리다이렉트
+    // 수정 완료 시 해당 질문의 해당 답변으로 리다이렉트
     return String.format("redirect:/question/detail/%s#answer_%s", 
     answer.getQuestion().getId(), answer.getId());
   }
