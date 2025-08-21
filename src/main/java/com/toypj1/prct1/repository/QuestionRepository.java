@@ -19,6 +19,8 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
   Page<Question> findAll(Specification<Question> spec, Pageable pageable);
 
     // JPQL 쿼리문. 이미 @ManyToOne 등으로 ON 조건이 걸려있으므로 엔티티 관계 기반 JOIN 해야 함
+    // q 전체 선택, LEFT JOIN하여 연관 정보(질문 작성자, 답변 목록, 답변 작성자) 가져오기
+    // 검색 조건: [제목, 질문 내용, 질문 작성자, 답변 내용, 답변 작성자]
     @Query(
       "SELECT DISTINCT q FROM Question q "
     + "LEFT OUTER JOIN q.author m1 "

@@ -12,10 +12,11 @@
         <div
           class="card-text"
           style="white-space: pre-line"
-          th:text="${question.content}"
+          th:text="${question.subject}"
         ></div>
         <!-- content 컴포넌트: 우측 정렬 -->
         <div class="d-flex justify-content-end">
+          <!-- 수정일시 (있을 때만 표기) -->
           <div
             th:if="${question.modifyDate != null}"
             class="badge bg-light text-dark p-2 text-start mx-3"
@@ -25,6 +26,7 @@
               th:text="${#temporals.format(question.modifyDate, 'yyyy-MM-dd HH:mm')}"
             ></div>
           </div>
+          <!-- 수정일시 끝 -->
           <!-- badge 컴포넌트: 배경 하양, 글씨 검정, 들여쓰기 2, 좌측 정렬 -->
           <div class="badge bg-light text-dark p-2 text-start">
             <!-- 작성자 (있을 때만 렌더링) -->
@@ -171,11 +173,9 @@
       th:object="${answerForm}"
       method="post"
     >
-      <!-- 에러 메시지 시작. 에러 발생 시에만 표시 -->
+      <!-- 에러 메시지 -->
       <div th:replace="form_errors :: formErrorsFragment"></div>
-      <!-- 에러 메시지 끝 -->
-      <!-- 작성 범위. name={컬럼명}. rows=박스 크기 설정값. -->
-      <!-- 비로그인(Anonymous)일때는 disabled-->
+      <!-- 로그인 상태에서만 작성 가능, 비로그인 시 사용불가 -->
       <textarea
         sec:authorize="isAnonymous()"
         disabled
@@ -191,14 +191,14 @@
         id="content"
         rows="10"
       ></textarea>
-      <!-- '답변등록' 클릭 시 POST 방식으로 제출(submit)됨 -->
+      <!-- 답변 등록 버튼 -->
       <input class="btn btn-primary my-2" type="submit" value="답변등록" />
     </form>
   </div>
   <!-- container 끝 -->
   <!-- 자바스크립트 -->
   <script layout:fragment="script" type="text/javascript">
-    // 삭제 확인 시작
+    // 삭제 확인. 지정한 클래스명으로 바인딩, '클릭'시 발생
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function (element) {
       element.addEventListener("click", function () {
@@ -207,8 +207,7 @@
         }
       });
     });
-    // 삭제 확인 끝
-    // 추천 확인 시작
+    // 추천 확인. 지정한 클래스명으로 바인딩, '클릭'시 발생
     const recommend_elements = document.getElementsByClassName("recommend");
     Array.from(recommend_elements).forEach(function (element) {
       element.addEventListener("click", function () {
@@ -217,6 +216,5 @@
         }
       });
     });
-    // 추천 확인 끝
   </script>
 </html>

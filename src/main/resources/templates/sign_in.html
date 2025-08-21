@@ -1,6 +1,9 @@
 <!DOCTYPE html>
+<!-- layout.html 상속 -->
 <html layout:decorate="~{layout}">
+  <!-- layout.html의 content -->
   <div layout:fragment="content" class="container my-3">
+    <!-- 로그인폼. 요청 경로 및 방법 설정 -->
     <form th:action="@{/user/signIn}" method="post">
       <!-- 로그인 실패 시 안내문구 출력:
         1. security 로그인 실패
@@ -13,7 +16,8 @@
           ID 혹은 비밀번호를 다시 확인해주세요.
         </div>
       </div>
-      <!-- Spring Security는 id를 "username"으로만 받기 때문에 반드시 username으로 설정해야 함 -->
+      <!-- 입력란 -->
+      <!-- ※ Spring Security는 id를 "username"으로만 받기 때문에 반드시 username으로 설정해야 함 ※ -->
       <!-- 단, 입력(input 태그) 시에만) username이고 이후 메서드-매개변수는 다르게 해도 상관없음 -->
       <div class="mb-3">
         <label for="username" class="form-label">사용자ID</label>
@@ -28,6 +32,7 @@
           class="form-control"
         />
       </div>
+      <!-- 로그인 버튼 -->
       <button type="submit" class="btn btn-primary">로그인</button>
     </form>
   </div>

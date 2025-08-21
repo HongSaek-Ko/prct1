@@ -8,9 +8,11 @@
   <div layout:fragment="content" class="container my-3">
     <!-- 질문/검색탭 시작 -->
     <div class="row my-3">
+      <!-- 질문탭 -->
       <div class="col-6">
         <a th:href="@{/question/regist}" class="btn btn-primary">질문하기</a>
       </div>
+      <!-- 검색탭 -->
       <div class="col-6">
         <div class="input-group">
           <input
@@ -30,9 +32,23 @@
           </div>
         </div>
       </div>
+      <!-- 검색 폼(숨김처리. 위에서 검색 클릭 시 이게 요청됨)
+        (검색어, 페이지번호)받아서 요청. -->
+      <form th:action="@{/question/list}" method="get" id="searchForm">
+        <input type="hidden" id="kw" name="kw" th:value="${kw}" />
+        <input
+          type="hidden"
+          id="page"
+          name="page"
+          th:value="${questionList.number}"
+        />
+      </form>
+      <!-- searchForm 끝 -->
     </div>
     <!-- 질문/검색탭 끝 -->
+    <!-- '질문 목록' 표 -->
     <table class="table">
+      <!-- 표 구분 -->
       <thead class="table-dark">
         <!-- th 요소 중앙정렬 -->
         <tr class="text-center">
@@ -43,12 +59,14 @@
           <th>작성일시</th>
         </tr>
       </thead>
+      <!-- 표 내용 -->
       <tbody>
         <!-- th: - thymeleaf template engine이 사용하는 속성 -->
         <!--  :each - {Model객체}를 {배열}의 갯수만큼 반복하여 출력(= enhanced for loop, for-each) -->
         <!--  :text=${값} - 해당 요소의 텍스트로 "값"을 출력 -->
         <tr class="text-center" th:each="question, loop : ${questionList}">
-          <!-- 질문 번호 = 전체 질문 개수 - (현재 페이지 * 페이지 당 질문 개수) - 나열 인덱스 -->
+          <!-- 1. 질문 번호
+            (공식: 전체 질문 개수 - (현재 페이지 * 페이지 당 질문 개수) - 나열 인덱스) -->
           <!-- 나열 인덱스: 
             for문 내의 게시물 순서 (현재 페이지에서 표시할 수 있는 게시물의 인덱스)
             즉, [0] ~ [표시 가능한 게시물 목록의 마지막 인덱스] -->
@@ -57,30 +75,29 @@
               - (questionList.number * questionList.size) 
               - loop.index}"
           ></td>
-          <!-- 제목 좌측정렬 -->
+          <!-- 2. 제목 -->
           <td class="text-start">
-            <!-- th:href - thymeleaf의 링크 주소 -->
-            <!-- 문자열과 {객체}가 조합될 때는 @{}의 내부를-|로 양 끝을 감싸야 함 (|: 문자열 연결)-->
-            <!-- 질문 제목 (링크: 클릭 시 해당 질문으로 이동)-->
+            <!-- 질문 제목 (링크: 클릭 시 해당 질문으로 이동. ※(경로+객체)임! ) -->
             <a
               th:href="@{|/question/detail/${question.id}|}"
               th:text="${question.subject}"
             ></a>
-            <!-- 답변이 있다면(if > 0) 개수 표시 
-              #lists.size(이터러블객체): 이터러블 객체의 크기 반환 -->
+            <!-- 답변 개수. 있을 경우에만 표시 -->
+            <!-- #lists.size(이터러블객체): 이터러블 객체의 크기 반환 -->
             <span
               class="text-danger small ms-2"
               th:if="${#lists.size(question.answerList) > 0}"
               th:text="${#lists.size(question.answerList)}"
             ></span>
           </td>
-          <!-- 작성자 (작성자 정보 있는 경우에만 렌더링) -->
+          <!-- 3. 작성자 (작성자 정보 있는 경우에만) -->
           <td>
             <span
               th:if="${question.author != null}"
               th:text="${question.author.membername}"
             ></span>
           </td>
+          <!-- 4. 작성일시 -->
           <!-- #temporals.format(날짜객체, 날짜포맷). 연-월-일, 시:분:초 -->
           <td
             th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm:ss')}"
@@ -88,15 +105,18 @@
         </tr>
       </tbody>
     </table>
+    <!-- 질문 목록 표 끝 -->
     <!-- 페이징처리(페이지 번호) 시작 -->
     <!-- class=pagination, page-item, page-link 등은 bootstrap pagination 컴포넌트의 class -->
+    <!-- 질문 목록이 있으면 표시 -->
     <div th:if="${!questionList.isEmpty()}">
       <ul class="pagination justify-content-center">
-        <!-- 이전 페이지가 없으면(!hasPrevious) '이전'링크 비활성화(disabled)  -->
+        <!-- 이전 페이지가 없으면(!hasPrevious) '이전'링크 비활성화(disabled) -->
         <li
           class="page-item"
           th:classappend="${!questionList.hasPrevious} ? 'disabled'"
         >
+          <!-- '이전' 링크. 현재 페이지-1 -->
           <a
             class="page-link"
             href="javascript:void(0)"
@@ -105,7 +125,7 @@
             <span>이전</span>
           </a>
         </li>
-        <!-- 질문 목록(반복문). 현재 페이지와 동일한 페이지면 강조표시(active) -->
+        <!-- 페이지 번호 목록. 현재 페이지와 동일한 페이지면 강조표시(active) -->
         <!-- 현재 페이지 기준 좌우 5개씩 표시 (페이지숫자-5 && 페이지숫자+5) -->
         <!-- #numbers.sequnce(시작, 끝): 시작 ~ 끝 번호까지의 루프를 만드는 thymeleaf의 유틸리티.  -->
         <li
@@ -126,6 +146,7 @@
           class="page-item"
           th:classappend="${!questionList.hasNext} ? 'disabled'"
         >
+          <!-- '다음' 링크. 현재 페이지+1 -->
           <a class="page-link" th:href="@{|?page=${questionList.number+1}|}"
             ><span>다음</span></a
           >
@@ -133,17 +154,6 @@
       </ul>
     </div>
     <!-- 페이징처리(페이지 번호) 끝 -->
-    <!-- page, kw로 GET 요청하는 searchForm -->
-    <form th:action="@{/question/list}" method="get" id="searchForm">
-      <input type="hidden" id="kw" name="kw" th:value="${kw}" />
-      <input
-        type="hidden"
-        id="page"
-        name="page"
-        th:value="${questionList.number}"
-      />
-    </form>
-    <!-- searchForm 끝 -->
   </div>
   <script layout:fragment="script" type="text/javascript">
     // 페이지 버튼(class 'page-link') 클릭 시 이벤트

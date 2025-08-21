@@ -1,13 +1,20 @@
 <!DOCTYPE html>
+<!-- layout.html 상속 -->
 <html layout:decorate="~{layout}">
+  <!-- layout.html의 content -->
   <div layout:fragment="content" class="container my-3">
     <div class="my-3 border-bottom">
+      <!-- 페이지 제목 -->
       <div>
         <h4>회원가입</h4>
       </div>
     </div>
+    <!-- 회원가입 폼 -->
+    <!-- 요청 경로, 객체, 방식 설정 -->
     <form th:action="@{/user/signUp}" th:object="${signUpForm}" method="post">
+      <!-- 에러 메시지 -->
       <div th:replace="form_errors :: formErrorsFragment"></div>
+      <!-- 정보 입력란 -->
       <div class="mb-3">
         <label for="membername" class="form-label">사용자ID</label>
         <input type="text" th:field="*{membername}" class="form-control" />
@@ -24,6 +31,7 @@
         <label for="passwordCheck" class="form-label">비밀번호 확인</label>
         <input type="text" th:field="*{passwordCheck}" class="form-control" />
       </div>
+      <!-- 회원가입 버튼 -->
       <button type="submit" class="btn btn-primary">회원가입</button>
     </form>
   </div>

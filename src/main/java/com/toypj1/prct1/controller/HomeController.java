@@ -13,7 +13,7 @@ public class HomeController {
     return "여기는 질답 사이트에용.";
   }
 
-  // localhost:{포트번호} 외 아무것도 입력 안하면 리다이렉트
+  // localhost:{포트번호} 외 아무것도 입력 안하면 리다이렉트할 경로 설정
   @GetMapping("/")
   public String root() {
     return "redirect:/question/list";

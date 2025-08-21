@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 
-
+// 컨트롤러, 요청 url "/user"로 시작
+// 생성자 자동 생성
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class MemberController {
   private final MemberService memberService;
 
-  // 회원가입 화면
+  // 회원가입 폼 요청
   @GetMapping("/signUp")
   public String signUp(SignUpForm signUpForm) {
       return "sign_up";
@@ -34,7 +35,8 @@ public class MemberController {
   // 회원가입 요청
   @PostMapping("/signUp")
   public String signUp(@Valid SignUpForm signUpForm, BindingResult bindingResult) {
-    // 유효성 검사 실패 시 회원가입창 리렌더링
+
+    // 오류 존재 시 회원가입창 리렌더링
     if(bindingResult.hasErrors()) {
       return "sign_up";
     }
@@ -45,28 +47,26 @@ public class MemberController {
       return "sign_up";
     }
 
+    // (위 두 상황 통과 시) 루트 경로로 리다이렉트
+    // 예외 1. 입력한 사용자 ID 및 이메일 주소가 이미 있다면 회원가입 거부
+    // 예외 2. 기타 오류는 해당 메시지 표시
     try {
-      // 둘 다 통과 시 (회원가입 후)홈화면으로 리다이렉트
-      log.info("password??: {}", signUpForm.getPassword());
       memberService.create(signUpForm.getMembername(), signUpForm.getEmail(), signUpForm.getPassword());
       return "redirect:/";
       
-      // 사용자 ID 혹은 이메일 주소가 이미 있으면 회원가입 거부
     } catch (DataIntegrityViolationException e) {
       e.printStackTrace();
       bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
 
-      // 기타 오류는 해당 메시지 표시
     } catch (Exception e) {
       e.printStackTrace();
       bindingResult.reject("signupFailed", e.getMessage());
       return "sign_up";
     }
-    // 회원가입 완료(요청 성공) 시 초기화면으로 리다이렉트
     return "redirect:/";
   }
   
-  // 로그인 화면
+  // 로그인 화면 요청 (로그인 및 로그아웃 처리는 SecurityConfig에서 설정)
   @GetMapping("/signIn")
   public String signIn() {
       return "sign_in";

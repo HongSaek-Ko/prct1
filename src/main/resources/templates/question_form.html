@@ -1,7 +1,11 @@
 <!DOCTYPE html>
+<!-- layout.html 형식 -->
 <html layout:decorate="~{layout}">
+  <!-- layout.html의 content -->
   <div layout:fragment="content" class="container">
+    <!-- 페이지 제목 -->
     <h5 class="my-3 border-bottom pb-2">질문 등록</h5>
+    <!-- 질문 작성 폼 -->
     <!-- th:object=${객체} - form의 속성들이 QuestionForm의 속성들로 구성됨을 명시 -->
     <form th:object="${questionForm}" method="post">
       <!-- S.S 규칙 상 th:action 속성 지정하는 대신 CSRF 값 설정을 수동으로 추가 -->
@@ -13,13 +17,14 @@
       <!-- 오류 메시지 공통 템플릿 시작 -->
       <!-- div 요소를 form_errors.html의 th:fragment 속성명이 f.E.F인 요소로 교체 -->
       <div th:replace="form_errors :: formErrorsFragment"></div>
-      <!-- 오류 메시지 템플릿 끝 -->
+      <!-- 질문 제목 작성 부분 -->
       <div class="mb-3">
         <label for="subject" class="form-label">제목</label>
         <!-- th:field=속성 - name=속성 과 동일한 역할. 
           단, 등록 에러(유효성 검사 실패) 발생 시 입력 내용이 초기화되는 것을 방지하는 기능이 있음 -->
         <input type="text" th:field="*{subject}" class="form-control" />
       </div>
+      <!-- 질문 내용 부분 -->
       <div class="mb-3">
         <label for="contnet" class="form-label">내용</label>
         <textarea
@@ -28,6 +33,7 @@
           rows="10"
         ></textarea>
       </div>
+      <!-- 질문 등록 버튼 -->
       <input type="submit" value="등록하기" class="btn btn-primary my-2" />
     </form>
   </div>

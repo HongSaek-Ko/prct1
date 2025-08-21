@@ -1,9 +1,9 @@
-<!-- 내비게이션 바 시작 -->
 <nav
   th:fragment="navbarFragment"
   class="navbar navbar-expand-lg navbar-light bg-light border-bottom"
 >
   <div class="container-fluid">
+    <!-- 상단 로고(루트 경로로 이동) -->
     <a class="navbar-brand" href="/">vscode + sb</a>
     <button
       class="navbar-toggler"
@@ -18,15 +18,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- 비로그인 상태 -> '로그인', 로그인 상태 -> '로그아웃' 표시 -->
         <li class="nav-item">
-          <!-- 비로그인 상태: isAnonymous()==true -->
           <a
             class="nav-link"
             sec:authorize="isAnonymous()"
             th:href="@{/user/signIn}"
             >로그인</a
           >
-          <!-- 로그인 상태: isAuthenticated()==true -->
           <a
             class="nav-link"
             sec:authorize="isAuthenticated()"
@@ -34,6 +33,7 @@
             >로그아웃</a
           >
         </li>
+        <!-- 회원가입 링크 -->
         <li class="nav-item">
           <a class="nav-link" th:href="@{/user/signUp}">회원가입</a>
         </li>

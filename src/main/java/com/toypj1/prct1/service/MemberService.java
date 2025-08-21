@@ -17,6 +17,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
 
+  // 회원가입 (사용자명, 이메일, 비밀번호)
   public Member create(String membername, String email, String password) {
     Member member = new Member();
     member.setMembername(membername);
@@ -27,14 +28,9 @@ public class MemberService {
     return member;
   }
 
-  // 멤버 정보 가져오기
+  // 멤버 조회 ((조회할)멤버)
   public Member getMember(String membername) {
-    Optional<Member> member = memberRepository.findByMembername(membername);
-    // 멤버 존재하면 해당 정보 가져오고, 없으면 예외 던짐
-    if(member.isPresent()) {
-      return member.get();
-    } else {
-      throw new DataNotFoundException("member not found");
-    }
+    return memberRepository.findByMembername(membername)
+      .orElseThrow(() -> new DataNotFoundException("사용자 정보 없음!"));
   }
 }

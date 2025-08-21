@@ -1,3 +1,8 @@
+<!-- 에러 메시지 fragment -->
+<!-- #fields는 thymeleaf에서 제공하는 표준 유틸리티 객체 -->
+<!-- 여기에는 각 요청에 대한 리턴 정보가 바인딩됨: 
+    ex) 요청 → @Valid 결과가 br에 바인딩 → 리턴되어 뷰로 전달 
+      → br의 정보가 #fileds에 바인딩되고, 여기서 꺼내어 씀-->
 <div
   th:fragment="formErrorsFragment"
   class="alert alert-danger"

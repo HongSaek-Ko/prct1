@@ -27,7 +27,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 
-
+// 컨트롤러, 경로는 /answer로 시작
+// 생성자 자동 생성
 @RequestMapping("/answer")
 @RequiredArgsConstructor
 @Controller
@@ -36,16 +37,19 @@ public class AnswerController {
   private final AnswerService answerService;
   private final MemberService memberService;
 
-  // POST 요청: 답변 등록
+  // 답변 등록 요청
   // @Valid: (답변 작성 시)유효성 검사
-  // Principal: S.S에서 제공하는 '사용자 정보' 객체.
-  @PreAuthorize("isAuthenticated()") // '로그인이 필요한 메서드임' -> 로그아웃 상태에서 호출 시 로그인 페이지로 이동
+  // 로그인된 경우만 가능
+  @PreAuthorize("isAuthenticated()")
   @PostMapping("/regist/{id}")
   public String registAnswer(
     Model model, 
     @PathVariable(value = "id") Integer id, 
     @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal) {
+      // 변수1에 질문 정보 바인딩
       Question question = questionService.getQuestion(id);
+
+      // 변수2에 (접속 중인)사용자 정보 바인딩
       Member member = memberService.getMember(principal.getName());
 
       // 에러 시 답변 등록 템플릿(question_detail) (다시)렌더링
@@ -54,22 +58,25 @@ public class AnswerController {
         return "question_content";
       }
 
-      // 검사 통과 시 등록 진행, 질문 상세보기(q.getId)의 등록한 답변 위치(a.getId)로 리다이렉트
+      // 검사 통과 시 등록
       Answer answer = answerService.registAnswer(question, answerForm.getContent(), member);
+      
+      // 해당 질문의, 답변을 등록한 위치로 리다이렉트
       return String.format(
         "redirect:/question/detail/%s#answer_%s", 
         answer.getQuestion().getId(), answer.getId()
       );
   }
 
-  // Get 요청: 답변 수정 폼
+  // 답변 수정 폼 요청
+  // 로그인된 경우만 가능
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/modify/{id}")
   public String answerModify(AnswerForm answerForm, @PathVariable(value = "id") Integer id, Principal principal) {
-    // answer에 PK로 찾아서 담기
+    // 변수1에 답변 정보 바인딩
     Answer answer = answerService.getAnswer(id);
 
-    // 사용자 == 작성자만 수정 가능
+    // 사용자 == 작성자일 때만 수정 가능
     if(!answer.getAuthor().getMembername().equals(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다");
     }
@@ -81,7 +88,8 @@ public class AnswerController {
     return "answer_form";
   }
 
-  // Post 요청: 답변 수정
+  // 답변 수정 요청
+  // 로그인된 경우만 가능
   @PreAuthorize("isAuthenticated()")
   @PostMapping("/modify/{id}")
   public String answerModify(
@@ -91,28 +99,31 @@ public class AnswerController {
     Principal principal
   ) 
   {
-    // 에러 있으면 리렌더링
+    // 요청 정보 중 에러 있다면 폼 리렌더링
     if(bindingResult.hasErrors()) {
       return "answer_form";
     }
-    // answer에 id로 찾아서 담음
+    // 변수1에 기존 답변 정보 바인딩
     Answer answer = answerService.getAnswer(id);
+    
     // 사용자 == 작성자만 수정 가능
     if(!answer.getAuthor().getMembername().equals(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
     }
-    // answer에 담아둔 거로 content 수정
+    // 바인딩한 정보를 입력받은 정보로 수정
     answerService.modifyAnswer(answer, answerForm.getContent());
+
     // 수정 완료 시 해당 질문의 해당 답변으로 리다이렉트
     return String.format("redirect:/question/detail/%s#answer_%s", 
     answer.getQuestion().getId(), answer.getId());
   }
   
-  // Get: 답변 삭제 폼
+  // 답변 삭제 폼 요청
+  // 로그인한 경우만 가능
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/delete/{id}")
   public String answerDelete(Principal principal, @PathVariable(value = "id") Integer id) {
-    // id로 답변 찾아서 answer에 담기
+    // 변수1에 답변 정보 바인딩
     Answer answer = answerService.getAnswer(id);
 
     // 사용자 == 작성자만 삭제 가능
@@ -127,13 +138,21 @@ public class AnswerController {
     return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
   }
   
-  // Get: 답변 추천
+  // 답변 추천 요청
+  // 로그인한 경우만 가능
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/recommend/{id}")
   public String recommendAnswer(Principal p, @PathVariable(value = "id") Integer id) {
+    // 변수1에 답변 정보 바인딩
     Answer a = answerService.getAnswer(id);
+
+    // 변수2에 사용자 정보 바인딩
     Member m = memberService.getMember(p.getName());
+
+    // 답변, 사용자 정보로 추천 등록
     answerService.recommend(a, m);
+
+    // 요청 완료 시 해당 질문의 답변 위치로 이동
     return String.format("redirect:/question/detail/%s#answer_%s", 
     a.getQuestion().getId(), a.getId());
   }
